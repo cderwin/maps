@@ -1,0 +1,69 @@
+##code modified from http://zevross.com/blog/2015/10/14/manipulating-and-mapping-us-census-data-in-r-using-the-acs-tigris-and-leaflet-packages-3/
+library(rgdal)    # for readOGR and others
+library(sp)       # for spatial objects
+library(leaflet)  # for interactive maps (NOT leafletR here)
+library(dplyr)    # for working with data frames
+library(ggplot2)  # for plotting
+##===========================================================
+unzip("cb_2014_34_tract_500k.zip")
+ogrInfo(".", "cb_2014_34_tract_500k")
+tract<-readOGR(".", "cb_2014_34_tract_500k")
+tract@data$GEOID<-as.character(tract@data$GEOID)
+##===========================================================
+data <- read.csv("censustracts/ACS_14_5YR_B03003_with_ann.csv", stringsAsFactors = FALSE)
+names(data)[2]<-"id"
+data <- mutate(data, id=as.character(id),
+               geography=as.character(Geography),
+               total = as.numeric(Estimate..Total.),
+               hispanic = as.numeric(Estimate..Total....Hispanic.or.Latino),
+               percent = (hispanic/total)*100)
+##===========================================================
+library(maptools)
+if (!require(gpclib)) install.packages("gpclib", type="source")
+gpclibPermit()
+##===========================================================
+
+tract@data$GEOID<-gsub("^0", '', tract@data$GEOID)
+ggtract<-fortify(tract, region = "GEOID") 
+ggtract<-left_join(ggtract, data, by=c("id"))
+ggtract <- ggtract[grep("New Jersey", ggtract$geography),]
+
+
+
+##===========================================================
+#function for creating a Polygons object for 
+# input tractname
+polyFunc<-function(groupname, dat){
+  poly<-filter(dat, id==groupname) %>% 
+    select(long, lat)
+  return(Polygons(list(Polygon(poly)), groupname))
+}
+
+tracts <- distinct(ggtract, id, percent)
+tractname <- tracts$id
+polygons<-lapply(tractname, function(x) polyFunc(x, dat=ggtract)) 
+sp.polygon<-SpatialPolygons(polygons)
+df.polygon<-SpatialPolygonsDataFrame(sp.polygon, 
+                                     data=data.frame(row.names=tractname, tracts))
+df.polygon <- df.polygon[order(df.polygon$percent),]
+popup <- paste0("GEOID: ", df.polygon$id, "<br>", "Percent of Hispanics: ", round(df.polygon$percent,2),"<br>","Total Population: ",df.polygon$total,"<br>","Total Hispanics: ", df.polygon$hispanic)
+pal <- colorNumeric(
+  palette = "YlGnBu",
+  domain = df.polygon$percent
+)
+
+map1<-leaflet() %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  addPolygons(data = df.polygon, 
+              fillColor = ~pal(percent), 
+              color = "#b2aeae", # you need to use hex colors
+              fillOpacity = 0.7, 
+              weight = 0.3, 
+              smoothFactor = 0.2,
+              popup = popup) %>%
+  addLegend(pal = pal, 
+            values = df.polygon$percent, 
+            position = "bottomright", 
+            title = "Percent of Hispanics",
+            labFormat = labelFormat(suffix = "%")) 
+map1
