@@ -7,7 +7,8 @@ var App = {
         base_url: location.origin
     },
     data: {},
-    helpers: {}
+    helpers: {},
+    controls: {}
 };
 
 $.ajax({
@@ -40,9 +41,8 @@ initialize_map = function(){
 };
 
 create_cities_menu = function(){
-    var citiesControl = new L.Control.PointList({points: App.data.cities});
-    citiesControl.addTo(App.data.map);
-    console.log("test");
+    App.controls.citiesList = new L.Control.PointList({points: App.data.cities});
+    App.controls.citiesList.addTo(App.data.map);
 };
 
 
@@ -58,21 +58,37 @@ L.Control.PointList = L.Control.extend({
 
     onAdd: function (map) {
         var points = this.options.points;
-        var container = L.DomUtil.create("div", "btn-group"),
-            button = L.DomUtil.create("button", "btn btn-default dropdown-toggle", container),
-            btn_list = L.DomUtil.create("ul", "dropdown-menu", container);
 
-        button.setAttribute("type", "button");
-        button.setAttribute("data-toggle", "dropdown");
-        button.setAttribute("aria-haspopup", "true");
-        button.setAttribute("aria-expanded", "false");
-        button.innerHtml = points[0].name + "<span class=\"caret\"></span>";
+        function build_dropdown (points) {
+            var btn_list = $("<ul class=\"dropdown-menu\"></ul>");
 
-        for (var i = 1; i < points.length; i++){
-            var point = points[i];
-            var item = document.createElement("li");
-            item.innerHtml = "<a href=\"#\">" + point.name + "</a>";
-            btn_list.appendChild(item);
-        }
+            points.forEach(function(point){
+                btn_list.append(
+                    $("<li></li>").append(
+                        $("<a></a>")
+                        .attr("href", "#")
+                        .text(point.name)
+                    ).click(function(){
+                        App.data.map.panTo(point);
+                        btn_list.parent().children().first().html(point.name + " <span class=\"caret\"></span>");
+                    })
+                );
+            });
+            
+            return btn_list;
+        };
+
+        var container = $("<div></div>")
+            .addClass("btn-group")
+            .append(
+                $("<button></button>")
+                .addClass("btn btn-default dropdown-toggle")
+                .attr("type", "button")
+                .attr("data-toggle", "dropdown")
+                .attr("aria-haspopup", "true")
+                .attr("aria-expanded", "false")
+                .html(points[0].name + " <span class=\"caret\"></span>")
+            ).append(build_dropdown(points));
+        return container[0];
     }
 });
