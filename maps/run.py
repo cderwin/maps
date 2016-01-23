@@ -3,10 +3,10 @@ import routes
 
 from flask import Flask
 
-app = Flask(__name__, static_folder='assets', instance_path='config', instance_relative_config=True)
-routes.wire(app)
+app = Flask(__name__, static_folder='assets')
+app.config['DEBUG'] = True
 
-environment = os.environ.get('MAPS_ENV', 'local')
+routes.wire(app)
 
 if __name__ == '__main__':
     app.run()

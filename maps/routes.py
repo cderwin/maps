@@ -1,5 +1,6 @@
-from api.views import stores, census
+import views
 
 def wire(app):
-    app.add_url_rule('/api/stores/<provider>', 'stores', stores.dispatch)
-    app.add_url_rule('/api/census/<category>', 'census', census.dispatch)
+    app.add_url_rule('/', 'index', views.index)
+    # app.add_url_rule('/api/stores/<provider>', 'stores', views.stores)
+    # app.add_url_rule('/api/census/<category>', 'census', views.census)
