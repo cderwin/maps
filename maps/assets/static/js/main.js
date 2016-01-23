@@ -40,4 +40,39 @@ initialize_map = function(){
 };
 
 create_cities_menu = function(){
+    var citiesControl = new L.Control.PointList({points: App.data.cities});
+    citiesControl.addTo(App.data.map);
+    console.log("test");
 };
+
+
+// Custom map controls
+
+// PointList control -- to list cities
+L.Control.PointList = L.Control.extend({
+
+    options: {
+        position: "topright",
+        points: {}
+    },
+
+    onAdd: function (map) {
+        var points = this.options.points;
+        var container = L.DomUtil.create("div", "btn-group"),
+            button = L.DomUtil.create("button", "btn btn-default dropdown-toggle", container),
+            btn_list = L.DomUtil.create("ul", "dropdown-menu", container);
+
+        button.setAttribute("type", "button");
+        button.setAttribute("data-toggle", "dropdown");
+        button.setAttribute("aria-haspopup", "true");
+        button.setAttribute("aria-expanded", "false");
+        button.innerHtml = points[0].name + "<span class=\"caret\"></span>";
+
+        for (var i = 1; i < points.length; i++){
+            var point = points[i];
+            var item = document.createElement("li");
+            item.innerHtml = "<a href=\"#\">" + point.name + "</a>";
+            btn_list.appendChild(item);
+        }
+    }
+});
