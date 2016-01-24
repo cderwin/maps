@@ -1,2 +1,5 @@
 .env/
 *__pycache__/
+application.css
+application.js
+.webassets-cache

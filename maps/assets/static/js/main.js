@@ -60,7 +60,7 @@ L.Control.PointList = L.Control.extend({
         var points = this.options.points;
 
         function build_dropdown (points) {
-            var btn_list = $("<ul class=\"dropdown-menu\"></ul>");
+            var btn_list = $("<ul></ul>").addClass("dropdown-menu dropdown-menu-right");
 
             points.forEach(function(point){
                 btn_list.append(

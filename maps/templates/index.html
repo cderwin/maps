@@ -3,16 +3,15 @@
     <head>
         <title>LA Hispanics Map</title>
 
-        <link href="/assets/vendor/css/bootstrap.css" rel="stylesheet">
-        <link href="/assets/vendor/css/leaflet.css" rel="stylesheet">
-        <link href="/assets/static/css/main.css" rel="stylesheet"/>
+        {% assets "css" %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet"/>
+        {% endassets %}
         
-        <script src="/assets/vendor/js/jquery.js"></script>
-        <script src="/assets/vendor/js/bootstrap.js"></script>
-        <script src="/assets/vendor/js/leaflet.js"></script>
+        {% assets "js" %}
+        <script src="{{ ASSET_URL }}"></script>
+        {% endassets %}
     </head>
     <body>
         <div id="container"></div>
-        <script src="/assets/static/js/main.js"></script>
     </body>
 </html>
