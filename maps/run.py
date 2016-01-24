@@ -4,6 +4,9 @@ import routes
 
 from flask import Flask
 from flask.ext.assets import Environment as AssetsEnvironment, Bundle
+from webassets.filter import register_filter
+from extensions.webassets.filters.node_sass import NodeSass
+from webassets_babel import BabelFilter
 
 config = {
     "local": "config.BaseConfig",
@@ -20,17 +23,16 @@ if os.path.isfile(cfg_path):
     app.config.from_pyfile(cfg_path)
 
 # Bundle assets
+register_filter(NodeSass)
+register_filter(BabelFilter)
 assets = AssetsEnvironment(app)
 
-vendored_js = Bundle('vendor/js/jquery.js', 'vendor/js/*', filters='jsmin')
-vendored_css = Bundle('vendor/css/*', filters='cssmin')
-
-js = Bundle(vendored_js, 'static/js/*',
-            filters='jsmin',
+js = Bundle('vendor/js/jquery.js', 'vendor/js/*', 'static/js/*',
+            filters='babel,jsmin',
             output='application.js')
 
-css = Bundle(vendored_css, 'static/css/*',
-             filters='cssmin',
+css = Bundle('static/scss/main.scss',
+             filters='node-sass,cssmin',
              output='application.css')
 
 assets.register('js', js)

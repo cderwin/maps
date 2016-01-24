@@ -1,5 +1,6 @@
 .env/
-*__pycache__/
+__pycache__/
 application.css
 application.js
 .webassets-cache
+node_modules/
