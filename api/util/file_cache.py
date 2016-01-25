@@ -1,18 +1,19 @@
 import os.path
 import json
 
-from flask import current_app
+from flask import current_app as app
+from .mapping import distance
 
 class FileCache(object):
     def __init__(self, name, base_dir=None):
-        base_dir = base_dir or current_app.config['TMP_DIR']
+        base_dir = base_dir or app.config['TMP_DIR']
         self.base = os.path.join(base_dir, name)
 
     def fname(self, *keydata):
-        fname = reduce(keydata, lambda a, x: os.path.join(a, x)), self.base)
+        fname = reduce(keydata, (lambda a, x: os.path.join(a, x)), self.base)
         return fname
 
-    def check_cache(self, *keydata):
+    def check(self, *keydata):
         fname = self.fname(*keydata)
         if os.path.isfile(fname):
             return self.read(*keydata)
@@ -36,7 +37,9 @@ class FileCache(object):
         return {"results": data, "meta": meta}
 
 
-    def write(*keydata, fname=None):
+    def write(*keydata, fname=None, data=None):
+        if data in None:
+            raise ValueError("No data passed tow write")
         fname = fname or self.fname(*keydata)
         max_distance = reduce(stores, (lambda a, store: max(a, distance(store, {"lat": lat, "lon": lon}))), 0) 
         header = """
@@ -50,3 +53,5 @@ class FileCache(object):
         with open(fname, 'w') as f:
             f.write(header)
             json.load(f, data)
+
+        return data

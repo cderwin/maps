@@ -8,6 +8,7 @@ class BaseConfig(object):
     # App Config
     ROOT_DIR = os.path.realpath(__file__ + '../../..')
     NODE_BIN = os.path.join(os.path.dirname(ROOT_DIR), 'node_modules/.bin')
+    TMP_DIR = os.path.join(ROOT_DIR, 'tmp')
 
     # webassets config
     ASSETS_DEBUG = False

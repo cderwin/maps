@@ -1,12 +1,14 @@
 from flask import abort, app
-from utils.mapping import distance
+from util.mapping import distance
+from util.file_cache import FileCache
 
 import requests
 import json
 
 
-def stores(lat, lon):
-    data = get_cache(lat, lon) or make_request(lat, lon)
+def stores(provider, lat, lon):
+    file_cache = FileCache('vz-api')
+    data = file_cache.check(lat, lon) or file_cache.write(lat, lon, data=make_request(lat, lon))
     data = sanitize_fields(data)
     data = serialize_data(data, lat, lon)
     return data, 200
@@ -27,7 +29,7 @@ def make_request(lat, lon, strict=False):
     try:
         response = requests.get(url, headers=headers)
         data = response.json()
-    except HTTPError, JsonDecodeError:
+    except (HTTPError, JsonDecodeError):
         abort(504)
 
     return data
@@ -39,33 +41,30 @@ whitelisted_fields = {
     "lon": "lng"
 }
 
+
+def get_value(field, store):
+    if isinstance(field, str):
+        field_arr = field.strip().split('.')
+        value = reduce(field_arr, (lambda a, f: a.get(f, {})), store) or None
+    elif callable(field):
+        value = field(store)
+
+
 def sanitize_fields(data):
-    data = []
-    for store in data:
-        store_data = dict()
-        for name, field in whitelisted_fields.items():
-            if isinstance(field, str):
-                field_arr = field.strip().split('.')
-                value = reduce(field_arr, (lambda a, f: a.get(f, {})), store) or None
-            else if callable(field):
-                value = field(store)
-            else:
-                continue
-            store_data[name] = value
-        data.append(store_data)
+    data = [{name: get_value(field, store) for name, field in filter(lambda x: isinstance(x, str) or callable(x), whitelisted_fields)} for store in data]
     return data
 
 
 def serialize_data(data, lon, lat):
     results = {
-        "results": data
+        "results": data,
         "meta": {
             "count": len(data),
             "center": {
-                "lon": lon,
-                "lat": lat
+                "lon": float(lon),
+                "lat": float(lat)
             },
-            "max_distance": reduce(data, (lambda a, x: max(a, distance(x, (lat, lon)))), 0)
+            "max_distance": reduce(data, (lambda a, x: max(a, distance(x, Point(lat, lon)))), 0)
         }
     }
 
