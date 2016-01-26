@@ -4,3 +4,4 @@ application.css
 application.js
 .webassets-cache
 node_modules/
+tmp/*
