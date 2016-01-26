@@ -2,15 +2,26 @@ import os.path
 import json
 
 from flask import current_app as app
+from functools import reduce
 from .mapping import distance
 
+
 class FileCache(object):
-    def __init__(self, name, base_dir=None):
+    def __init__(self, name, base_dir=None, meta_func=None):
         base_dir = base_dir or app.config['TMP_DIR']
         self.base = os.path.join(base_dir, name)
+        if not os.path.isdir(self.base):
+            os.mkdir(self.base)
+
+        if meta_func is not None:
+            self.meta_func = meta_func
+        else:
+            def default_meta(data, keydata):
+                return {"key": ','.join(keydata)}
+            self.meta_func = default_meta
 
     def fname(self, *keydata):
-        fname = reduce(keydata, (lambda a, x: os.path.join(a, x)), self.base)
+        fname = reduce((lambda a, x: os.path.join(a, x)), keydata, self.base)
         return fname
 
     def check(self, *keydata):
@@ -19,7 +30,7 @@ class FileCache(object):
             return self.read(*keydata)
         return None
 
-    def read(*keydata, fname=None):
+    def read(self, *keydata, fname=None):
         fname = fname or self.fname(*keydata)
         with open(fname) as f:
             # Read header
@@ -28,7 +39,7 @@ class FileCache(object):
             for line in f:
                 if line.startswith('---'):
                     break
-                key, value = map(strip, line.strip().split(':', 1))
+                key, value = map(lambda x: x.strip(), line.strip().split(':', 1))
                 meta[key] = value
 
             # Read body
@@ -37,21 +48,23 @@ class FileCache(object):
         return {"results": data, "meta": meta}
 
 
-    def write(*keydata, fname=None, data=None):
-        if data in None:
-            raise ValueError("No data passed tow write")
+    def write(self, *keydata, fname=None, data=None):
+        if data is None:
+            raise ValueError("No data passed to write")
         fname = fname or self.fname(*keydata)
-        max_distance = reduce(stores, (lambda a, store: max(a, distance(store, {"lat": lat, "lon": lon}))), 0) 
-        header = """
-            ---
-            lat: {0}
-            lon: {1}
-            max_distance: {2}
-            ---
-            """.format(lat, lon, max_distance)
+        if not os.path.isdir(os.path.dirname(fname)):
+            os.mkdir(os.path.dirname(fname))
+
+        header = "---\n{0}---\n".format(
+                reduce(
+                       lambda x, a: x + "{0}: {1}\n".format(a[0], a[1]),
+                       self.meta_func(data, keydata).items(),
+                       ''
+                )
+        )
 
         with open(fname, 'w') as f:
             f.write(header)
-            json.load(f, data)
+            json.dump(data, f)
 
-        return data
+        return self.read(fname=fname)

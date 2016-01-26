@@ -3,8 +3,8 @@ from math import sin, cos, asin, sqrt, radians
 
 class Point(object):
     def __init__(self, lat, lon, unit='deg'):
-        self.lat = str(lat)
-        self.lon = str(lon)
+        self.lat = float(lat)
+        self.lon = float(lon)
         self.unit = unit
 
     def __getitem__(self, key):
@@ -41,7 +41,7 @@ class Point(object):
 
     @classmethod
     def to_point(cls, d):
-        return cls(d['lat'], d['lon'])
+        return cls(float(d['lat']), float(d['lon']))
 
 
 earth_radius = {

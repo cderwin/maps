@@ -1,17 +1,20 @@
 from flask import abort, app
-from util.mapping import distance
+from util.mapping import distance, Point
 from util.file_cache import FileCache
 
 import requests
 import json
 
+from requests import HTTPError, Timeout
+from functools import reduce
+from json import JSONDecodeError
 
 def stores(provider, lat, lon):
     file_cache = FileCache('vz-api')
-    data = file_cache.check(lat, lon) or file_cache.write(lat, lon, data=make_request(lat, lon))
+    data = (file_cache.check(lat, lon) or file_cache.write(lat, lon, data=make_request(lat, lon)))['results']
     data = sanitize_fields(data)
     data = serialize_data(data, lat, lon)
-    return data, 200
+    return json.dumps(data), 200, {'Content-Type': 'application/json'}
 
 
 def make_request(lat, lon, strict=False):
@@ -29,8 +32,10 @@ def make_request(lat, lon, strict=False):
     try:
         response = requests.get(url, headers=headers)
         data = response.json()
-    except (HTTPError, JsonDecodeError):
+    except Timeout:
         abort(504)
+    except (HTTPError, JSONDecodeError):
+        abort(502)
 
     return data
 
@@ -45,13 +50,14 @@ whitelisted_fields = {
 def get_value(field, store):
     if isinstance(field, str):
         field_arr = field.strip().split('.')
-        value = reduce(field_arr, (lambda a, f: a.get(f, {})), store) or None
+        value = reduce((lambda a, f: a.get(f, {})), field_arr, store) or None
     elif callable(field):
         value = field(store)
+    return value
 
 
 def sanitize_fields(data):
-    data = [{name: get_value(field, store) for name, field in filter(lambda x: isinstance(x, str) or callable(x), whitelisted_fields)} for store in data]
+    data = [{name: get_value(field, store) for name, field in filter(lambda x: isinstance(x[1], str) or callable(x[1]), whitelisted_fields.items())} for store in data]
     return data
 
 
@@ -64,7 +70,7 @@ def serialize_data(data, lon, lat):
                 "lon": float(lon),
                 "lat": float(lat)
             },
-            "max_distance": reduce(data, (lambda a, x: max(a, distance(x, Point(lat, lon)))), 0)
+            "max_distance": reduce((lambda a, x: max(a, distance(x, Point(lat, lon)))), data, 0)
         }
     }
 
