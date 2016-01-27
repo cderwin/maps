@@ -1,4 +1,4 @@
 from flask import render_template
 
-def index():
+def handle_request():
     return render_template('index.html')

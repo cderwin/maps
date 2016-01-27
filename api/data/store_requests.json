@@ -1,0 +1,46 @@
+{
+    "verizon": {
+        "url": "http://www.verizonwireless.com/vzw/rest/storelocatorProximitySearchJson.jsp?latitude={lat}&longitude={lon}&authRetailerType=all",
+        "headers": {
+            "Accept": "application/json",
+            "User-Agent": "Mozilla 5.0"
+        },
+        "data_mapping": {
+            "name": "title",
+            "lat": "lat",
+            "lon": "lng"
+        }
+    },
+    "tmobile": {
+        "url": "http://www.t-mobile.com/srvspub/storelocsearch?count=200&dist=0&latcentre={lat}&lngcentre={lon}",
+        "headers": {
+            "Accept": "application/json"
+        },
+        "results_field": "stores",
+        "data_mapping": {
+            "name": "store_name",
+            "lat": "lat",
+            "lon": "long"
+        }
+    },
+    "att": {
+        "handler_class": "views.stores.ATTStoresHandler",
+        "url": "https://www.att.com/apis/maps/v2/locator/search/viewport.json?sw={sw_corner}&ne={ne_corner}&origin={lat},{lon}&select=id,name,noteervices,phone,channel,ras,address1,address2,addr_hint,city,postal,region,lon,lat,hours,alerts",
+        "results_field": "results",
+        "data_mapping": {
+            "name": "name",
+            "lon": "lon",
+            "lat": "lat"
+        }
+    },
+    "sprint": {
+        "handler_class": "views.stores.SprintStoresHandler",
+        "url": "http://storelocator.sprint.com/locator/GetData.ashx?loc={zip}&r=50",
+        "results_field": "Hits",
+        "data_mapping": {
+            "name": "Retailer.Name",
+            "lat": "Retailer.LatLon.Latitude",
+            "lon": "Retailer.LatLon.Longitude"
+        }
+    }
+}
