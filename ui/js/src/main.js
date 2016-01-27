@@ -12,7 +12,7 @@ var App = {
         cities: [{
             name: "Austin",
             lat: 30.2500,
-            lon: 97.7500
+            lon: -97.7500
         }],
         stores: []
     },
