@@ -3,5 +3,7 @@ __pycache__/
 application.css
 application.js
 .webassets-cache
+.sass-cache
 node_modules/
 tmp/*
+dist

@@ -6,7 +6,8 @@ var App = {
             id: 'cderwin.oop9ob0c',
             access_token: 'pk.eyJ1IjoiY2RlcndpbiIsImEiOiJjaWpwOTh2bXUwMTN1dG9rb2g3Y2NmeWJ6In0.WZwqIUtZ4neCjXMT1YOmYw'
         },
-        base_url: location.origin
+        base_url: location.origin,
+        images_path: '/assets/images'
     },
     data: {
         cities: [{
@@ -22,7 +23,7 @@ var App = {
     }
 };
 
-L.Icon.Default.imagePath = App.config.base_url + "/assets/vendor/images";
+L.Icon.Default.imagePath = App.config.base_url + App.config.images_path;
 
 
 // Initialization
