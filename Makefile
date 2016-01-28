@@ -13,6 +13,11 @@ all: .env
 .env:
 	virtualenv % -p $(python)
 
+.installpackages.ts: .env
+	$(activate) && \
+	pip install -r requirements.txt && \
+	npm install
+
 $(activate): .env
 
 run: $(SRC)

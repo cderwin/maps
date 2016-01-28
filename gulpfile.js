@@ -9,7 +9,7 @@ var clean = require('gulp-clean');
 
 // Default Task
 
-gulp.task('default', ['sass', 'js', 'fonts', 'images']);
+gulp.task('default', ['sass', 'js', 'fonts', 'images', 'data']);
 
 // Stylesheets
 
@@ -87,6 +87,18 @@ gulp.task('fonts', function(){
     var stream = gulp.src('ui/fonts/**/*')
         .pipe(
             gulp.dest('ui/dist/fonts')
+        );
+
+    return stream;
+});
+
+
+// Data
+
+gulp.task('data', function(){
+    var stream = gulp.src('ui/data/**/*')
+        .pipe(
+            gulp.dest('ui/dist/data')
         );
 
     return stream;
