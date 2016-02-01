@@ -5,5 +5,7 @@ application.js
 .webassets-cache
 .sass-cache
 node_modules/
+bower_components/
 tmp/*
+build
 dist

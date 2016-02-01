@@ -1,0 +1,34 @@
+{
+  "name": "maps",
+  "description": "Show maps for VZW n stuf",
+  "main": "index.js",
+  "authors": [
+    "Cameron Derwin"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "maps",
+    "demographics",
+    "gis"
+  ],
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "^3.3.6",
+    "jquery": "^2.2.0",
+    "font-awesome": "^4.5.0",
+    "leaflet": "^0.7.7",
+    "Ionicons": "ionicons#^2.0.1",
+    "Leaflet.awesome-markers": "^2.0.2",
+    "awesome-bootstrap-checkbox": "^0.3.5",
+    "leaflet.markercluster": "^0.4.0"
+  }
+}

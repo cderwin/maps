@@ -1,0 +1,7 @@
+// Main scss file, import all else here
+
+@import 'overrides';
+@import '../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap';
+@import '../../bower_components/font-awesome/scss/font-awesome';
+@import '../../bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox';
+@import 'application';

@@ -1,14 +1,15 @@
-from flask import abort
-from util.mapping import distance, Point
-from util.file_cache import FileCache
-
-import requests
 import json
 import os.path
-
-from requests import HTTPError, Timeout
 from functools import reduce
 from json import JSONDecodeError
+
+from flask import abort
+import requests
+from requests import HTTPError, Timeout
+
+from shared.viewsets import ViewSet
+from util.mapping import distance, Point
+from util.file_cache import FileCache
 
 
 class StoresHandler(object):

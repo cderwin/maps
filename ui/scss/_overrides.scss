@@ -1,0 +1,5 @@
+// The bootstrap font/icon path defaults to /fonts, but we need it to be /assets/fonts
+$icon-font-path: "fonts/bootstrap/";
+
+// Override the font-awesome icon path
+$fa-font-path: "fonts";
