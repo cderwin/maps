@@ -3,3 +3,8 @@ $icon-font-path: "fonts/bootstrap/";
 
 // Override the font-awesome icon path
 $fa-font-path: "fonts";
+
+// Display leaflet controls on the same line
+.leaflet-control {
+    clear: none;
+}

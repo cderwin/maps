@@ -23,7 +23,11 @@ class Store {
     }
 
     popup_content(){
-        let element = $('<h6></h6>').text(this.name);
+        let element = $('<h6></h6>')
+            .text(this.name)
+            .append(
+                $("<p></p>").text(`Type: ${this.type.display_name}`)
+            );
         return element[0];
     }
 
@@ -35,9 +39,10 @@ class Store {
 
 class StoreType {
     
-    constructor(name, icon){
+    constructor(name, icon, display_name){
         this.name = name;
         this.icon = icon;
+        this.display_name = display_name || name;
         this.layer_group = L.layerGroup();
         this.stores = [];
         this.active = false;
@@ -58,6 +63,14 @@ class StoreType {
             this.active = false;
             map.removeLayer(this.layer_group);
             map.off("moveend", this.callback);
+        }
+    }
+
+    switch(map){
+        if (this.active){
+            this.hide(map);
+        } else {
+            this.show(map);
         }
     }
 
@@ -90,6 +103,11 @@ class StoreType {
             store => this.layer_group.addLayer(store.get_marker(this.icon))
         );
     }
+
+    static from_payload(payload){
+        let name = payload.name, icon = payload.icon, display_name = payload.display_name;
+        return new StoreType(name, icon, display_name);
+    }
 }
 
 
@@ -102,7 +120,7 @@ class StoreManager {
         if (type_data){
             type_data.forEach(
                 data => {
-                    let type = new StoreType(data.name, data.icon);
+                    let type = StoreType.from_payload(data);
                     this.add_type(type);
                 }
             );
@@ -114,6 +132,8 @@ class StoreManager {
     show(name){ this.types[name].show(this.map); }
 
     hide(name){ this.types[name].hide(this.map); }
+
+    switch(name){ this.types[name].switch(this.map); }
 
     update(){
         this.types.filter(
@@ -136,5 +156,15 @@ class StoreManager {
                 }
             }
         );
+    }
+
+    get_types(){
+        let result = []
+        for (let key in this.types){
+            if (this.types[key] instanceof StoreType){
+                result.push(this.types[key]);
+            }
+        }
+        return result;
     }
 }

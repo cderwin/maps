@@ -5,3 +5,18 @@
     left: 0;
     right: 0;
 }
+
+$verizon-brand: #cd040b;
+$att-brand: #3aa5dc;
+$tmobile-brand: #e20074;
+$sprint-brand: #ffe100;
+
+@include checkbox-variant('.checkbox-verizon', $verizon-brand);
+@include checkbox-variant('.checkbox-att', $att-brand);
+@include checkbox-variant('.checkbox-tmobile', $tmobile-brand);
+@include checkbox-variant('.checkbox-sprint', $sprint-brand);
+
+#cities-control ul li a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

@@ -57,6 +57,7 @@ gulp.task('js', ['js-src', 'js-lib'], function(){
 gulp.task('js-src', function(){
     var stream = gulp.src([
             'ui/js/main.js',
+            'ui/js/stores.js',
             'ui/js/**/*.js'
         ]).pipe(
             babel({

@@ -16,11 +16,12 @@ all: .env
 .installpackages.ts: .env
 	$(activate) && \
 	pip install -r requirements.txt && \
-	npm install
+	npm install && \
+	touch $@
 
-$(activate): .env
+$(activate): .installpackages.ts
 
-run: $(SRC)
+run: $(SRC) $(activate)
 	$(activate) && \
 	$(gulp) $(gulp_target) && \
 	$(python) $(api_dir)/run.py

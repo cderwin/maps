@@ -18,6 +18,7 @@ let App = {
         stores: [
             {
                 name: "verizon",
+                display_name: "Verizon",
                 icon: (new L.AwesomeMarkers.icon({
                             markerColor: "red",
                             prefix: "fa",
@@ -26,6 +27,7 @@ let App = {
             },
             {
                 name: "att",
+                display_name: "AT&T",
                 icon: (new L.AwesomeMarkers.icon({
                             markerColor: "blue",
                             prefix: "fa",
@@ -34,16 +36,18 @@ let App = {
             },
             {
                 name: "tmobile",
+                display_name: "T-Mobile",
                 icon: (new L.AwesomeMarkers.icon({
                             markerColor: "pink",
                             prefix: "fa",
-                            icon: "mmobile"
+                            icon: "mobile"
                 }))
             },
             {
                 name: "sprint",
+                display_name: "Sprint",
                 icon: (new L.AwesomeMarkers.icon({
-                            markerColor: "yellow",
+                            markerColor: "orange",
                             prefix: "fa",
                             icon: "mobile"
                 }))
@@ -106,6 +110,8 @@ function initCities(){
 function initStores(){
     App.managers.StoreManager = new StoreManager(App.data.map, App.data.stores);
     App.managers.StoreManager.show("verizon");
+    let stores_control = App.controls.registry.stores = new App.controls.StoresControl({store_manager: App.managers.StoreManager});
+    stores_control.addTo(App.data.map);
 };
 
 
