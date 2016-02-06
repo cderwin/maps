@@ -1,12 +1,11 @@
 {
   "name": "maps",
-  "version": "1.0.0",
-  "description": "Show maps for VZW n stuf",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "A fun time with leaflet, demographics, and lots of stores",
+  "main": "api/templates/index.html",
   "directories": {
     "test": "tests"
   },
-  "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.4.5",
     "babel-preset-es2015": "^6.3.13",
@@ -21,12 +20,13 @@
     "gulp-uglify": "^1.5.1"
   },
   "scripts": {
+    "run": "make run",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "ps-bitbucket:cderwin/maps"
+    "url": "https://githib.com/cderwin/maps"
   },
   "author": "Cameron Derwin/Preictive Science",
-  "license": "ISC"
+  "license": "MIT"
 }
