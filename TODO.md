@@ -7,3 +7,4 @@
 - Pre-fetch stores for cities of interest
 - Add flask scripts and script to add data files for new cities
 - ADD TESTS
+- Use rollup.js

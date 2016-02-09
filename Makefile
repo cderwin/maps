@@ -6,6 +6,8 @@ api_dir := api
 gulp := gulp
 gulp_target := 
 
+pyc_source = $(exec find . -type f -name "*.pyc")
+
 .PHONY: run kill
 
 all: .env
@@ -28,3 +30,8 @@ run: $(SRC) $(activate)
 
 kill:
 	kill -9 `lsof -ti :5000`
+
+clean:
+	rm -rf ui/dist && \
+	rm -rf $(pyc_source) && \
+	rm .*.ts
